@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Landing</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/material-icons.css' %}">
+        <script src="{% static 'js/htmx.min.js' %}"></script>
+        <style>
+            .landing-wrapper {
+                display: grid;
+                grid-template-columns: 1fr;
+                min-height: 100vh;
+            }
+
+            .landing-carousel {
+                display: none;
+                position: relative;
+                background: var(--primary);
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                text-align: center;
+            }
+
+            .landing-carousel img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.4;
+            }
+
+            .landing-carousel-content {
+                position: relative;
+                z-index: 10;
+                padding: 40px;
+            }
+
+            .landing-carousel-content h2 {
+                font-size: 2.5rem;
+                margin-bottom: 16px;
+                color: white;
+            }
+
+            .landing-carousel-content p {
+                font-size: 1.125rem;
+                color: rgba(255, 255, 255, 0.9);
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .landing-form-section {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 24px;
+                background: var(--bg-color);
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .header-mobile {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 32px;
+                color: var(--primary);
+                font-weight: 700;
+                font-size: 1.5rem;
+            }
+
+            @media (min-width: 1024px) {
+                .landing-wrapper {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .landing-carousel {
+                    display: flex;
+                }
+                .header-mobile {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="landing-wrapper">
+        <!-- Left: Carousel (hidden on small screens) -->
+            <div class="landing-carousel">
+            <!-- Simulated image -> replace with real or unsplash in production -->
+                <img src="{% static 'media/auditorium.jpeg' %}" alt="Auditorium">
+                <div class="landing-carousel-content slide-up">
+                    <h2>Welcome to AudiManage</h2>
+                    <p>Streamline your auditorium bookings, attendance, and reporting all in one place.</p>
+                </div>
+            </div>
+
+        <!-- Right: Login Form -->
+            <div class="landing-form-section">
+                <div class="glass-card login-card fade-in">
+                <!-- Mobile Logo -->
+                    <div class="header-mobile">
+                        <span class="material-icons-outlined">domain</span>
+                        AudiManage
+                    </div>
+
+                    <h2>Sign In</h2>
+                    <p style="margin-bottom: 24px;">Enter your email or username to continue</p>
+
+                    <form id="loginForm" class="flex-col gap-4" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="username" class="form-label">Email or Username</label>
+                            <div style="position: relative;">
+                                <span class="material-icons-outlined" style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); font-size: 20px;">person_outline</span>
+                                <input type="text" id="username" name="username" class="form-input" style="padding-left: 40px;" placeholder="e.g. john@university.edu" required>
+                            </div>
+                            <span class="error-text">Please enter a valid email or username</span>
+                        </div>
+
+                    <!-- Example of HTMX call, but for pure frontend we use JS simulation -->
+                        <button type="submit" class="btn btn-primary w-full" id="continueBtn" disabled>
+                            <span>Continue</span>
+                            <span class="material-icons-outlined htmx-indicator" style="font-size: 20px; animation: spin 1s linear infinite;">autorenew</span>
+                            <span class="material-icons-outlined btn-icon-right" style="font-size: 20px;">arrow_forward</span>
+                        </button>
+
+                    </form>
+
+                    <div style="margin-top: 24px; text-align: center; display: flex; align-items: center; gap: 8px;">
+                        <hr style="flex-grow: 1; border: none; border-top: 1px solid var(--border-color);">
+                        <span style="color: var(--text-muted); font-size: 0.875rem;">New here?</span>
+                        <hr style="flex-grow: 1; border: none; border-top: 1px solid var(--border-color);">
+                    </div>
+
+                    <a href="{% url 'role_select' %}" class="btn btn-outline w-full" style="margin-top: 16px;">
+                        Create an account
+                    </a>
+
+                    <div style="margin-top: 16px; text-align: center;">
+                        <a href="#" style="color: var(--text-muted); font-size: 0.875rem; text-decoration: underline;" onclick="document.getElementById('username').value='superadmin'; document.getElementById('loginForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); return false;">
+                            Login as Super Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <script src="{% static 'js/main.js' %}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                setupFormValidation('loginForm', 'continueBtn', (form) => {
+                    const username = form.username.value;
+                    return username.length > 2;
+                });
+
+                const loginForm = document.getElementById('loginForm');
+                const usernameInput = document.getElementById('username');
+                const continueBtn = document.getElementById('continueBtn');
+
+                usernameInput.addEventListener('input', () => {
+                    if (usernameInput.value.length > 2) {
+                        usernameInput.classList.remove('error');
+                        usernameInput.classList.add('success');
+                    } else {
+                        usernameInput.classList.remove('success');
+                    }
+                });
+
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btnIcon = continueBtn.querySelector('.btn-icon-right');
+                    const btnText = continueBtn.querySelector('span:first-child');
+
+                // Simulate network request
+                    btnIcon.style.display = 'none';
+                    btnText.textContent = 'Please wait...';
+                    continueBtn.classList.add('htmx-request');
+                    continueBtn.disabled = true;
+
+                    setTimeout(() => {
+                        const user = usernameInput.value.toLowerCase();
+                    // Simple demo logic
+                        if (user === 'admin' || user === 'faculty' || user === 'superadmin') {
+                        // User exists -> dashboard
+                            showToast(`Welcome back, ${user}!`, 'success');
+                            setTimeout(() => {
+                                window.location.href = '#';
+                            }, 1000);
+                        } else {
+                        // User does not exist -> OTP verification -> Role selection
+                            window.location.href = `otp.html?email=${encodeURIComponent(user)}`;
+                        }
+
+                        continueBtn.classList.remove('htmx-request');
+                        btnIcon.style.display = 'inline-block';
+                        btnText.textContent = 'Continue';
+                        continueBtn.disabled = false;
+                    }, 1500);
+                });
+            });
+        </script>
+    </body>
+</html>

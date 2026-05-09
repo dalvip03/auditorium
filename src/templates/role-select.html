@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Select Role</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/material-icons.css' %}">
+        <style>
+            .role-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 16px;
+            }
+
+            .role-card-wrapper {
+                width: 100%;
+                max-width: 600px;
+                text-align: center;
+            }
+
+            .roles-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 24px;
+                margin-top: 32px;
+            }
+
+            .role-option {
+                background: var(--surface);
+                border: 2px solid var(--border-color);
+                border-radius: var(--radius-lg);
+                padding: 32px 24px;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .role-option:hover {
+                border-color: var(--primary);
+                transform: translateY(-4px);
+                box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+            }
+
+            .role-icon {
+                font-size: 3rem;
+                color: var(--primary);
+                background: rgba(79, 70, 229, 0.1);
+                padding: 20px;
+                border-radius: var(--radius-full);
+                transition: var(--transition);
+            }
+
+            .role-option:hover .role-icon {
+                background: var(--primary);
+                color: white;
+            }
+
+            .role-title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: var(--text-main);
+            }
+
+            .role-desc {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+            }
+
+            @media (min-width: 640px) {
+                .roles-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="role-container fade-in">
+            <div class="role-card-wrapper">
+                <h2>How do you want to use AudiManage?</h2>
+                <p>Select your role to complete the registration process.</p>
+
+                <div class="roles-grid">
+                <!-- Admin Role -->
+                    <div class="role-option slide-up" onclick="window.location.href='{% url "register_admin" %}'">
+                        <span class="material-icons-outlined role-icon">admin_panel_settings</span>
+                        <div class="role-title">Admin</div>
+                        <div class="role-desc">Manage auditoriums, approve bookings, and handle attendance.</div>
+                    </div>
+
+                <!-- Faculty Role -->
+                    <div class="role-option slide-up" style="animation-delay: 0.1s;" onclick="window.location.href='#'">
+                        <span class="material-icons-outlined role-icon">school</span>
+                        <div class="role-title">Faculty</div>
+                        <div class="role-desc">Book auditoriums, manage your events, and download reports.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

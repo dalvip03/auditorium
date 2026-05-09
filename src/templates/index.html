@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+      .splash-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, var(--bg-color) 0%, var(--surface) 100%);
+      }
+
+      .splash-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        animation: pulseScale 2s infinite ease-in-out, fadeOutSplash 0.5s ease 2.5s forwards;
+      }
+
+      .logo-icon {
+        font-size: 4rem;
+        color: var(--primary);
+        background: rgba(79, 70, 229, 0.1);
+        padding: 24px;
+        border-radius: var(--radius-full);
+        box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+      }
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--text-main);
+      }
+
+      @keyframes pulseScale {
+        0% { transform: scale(0.95); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(0.95); opacity: 0.8; }
+      }
+
+      @keyframes fadeOutSplash {
+        to { opacity: 0; transform: scale(1.2); }
+      }
+    </style>
+    <link rel="stylesheet" href="{% static 'css/material-icons.css' %}">
+  </head>
+  <body>
+    <div class="splash-container">
+      <div class="splash-logo">
+        <div class="logo-icon">
+          <span class="material-icons-outlined" style="font-size: inherit;">domain</span>
+        </div>
+        <div class="logo-text">AudiManage</div>
+      </div>
+    </div>
+
+    <script>
+    // Redirect to landing page after 3 seconds
+      setTimeout(() => {
+        window.location.href = "{% url 'landing' %}";
+      }, 2800);
+    </script>
+  </body>
+</html>

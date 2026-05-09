@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Registration - AudiManage</title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'css/material-icons.css' %}">
+        <style>
+            .register-container {
+                max-width: 500px;
+                margin: 40px auto;
+                padding: 0 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="register-container fade-in">
+            <button class="btn btn-icon" onclick="history.back()" style="margin-bottom: 24px;">
+                <span class="material-icons-outlined">arrow_back</span>
+            </button>
+
+            <div class="glass-card">
+                <h2>Admin Registration</h2>
+                <p style="margin-bottom: 24px;">Send a request to the Super Admin</p>
+
+                <form id="adminRegisterForm" class="flex-col gap-4">
+                    <div class="form-group">
+                        <label class="form-label" for="fullName">Full Name</label>
+                        <input type="text" id="fullName" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="username">Username / Email</label>
+                        <input type="text" id="username" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="adminId">Admin ID</label>
+                        <input type="text" id="adminId" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" required>
+                        <span class="error-text" id="passwordError">Passwords do not match</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full" id="submitBtn" disabled style="margin-top: 16px;">
+                        Send Request
+                        <span class="material-icons-outlined">send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="toast-container" id="toastContainer"></div>
+        <script src="{% static 'js/main.js' %}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const form = document.getElementById('adminRegisterForm');
+                const submitBtn = document.getElementById('submitBtn');
+                const password = document.getElementById('password');
+                const confirm = document.getElementById('confirmPassword');
+
+                window.setupFormValidation('adminRegisterForm', 'submitBtn', (f) => {
+                    let valid = true;
+                    const inputs = f.querySelectorAll('input');
+                    inputs.forEach(i => { if(!i.value) valid = false; });
+
+                    if (password.value !== confirm.value && confirm.value !== '') {
+                        confirm.classList.add('error');
+                        valid = false;
+                    } else if (password.value === confirm.value && confirm.value !== '') {
+                        confirm.classList.remove('error');
+                        confirm.classList.add('success');
+                    }
+
+                    return valid;
+                });
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    submitBtn.disabled = true;
+                    showToast('Registration request sent to Super Admin!', 'success');
+                    setTimeout(() => { window.location.href = '{% url "landing" %}'; }, 2000);
+                });
+            });
+        </script>
+    </body>
+</html>
